@@ -1,3 +1,5 @@
+package de.choffmeister.sbt
+
 case class VersionString(major: Int, minor: Int, patch: Int, pre: Option[String]) extends Ordered[VersionString] {
   def compare(that: VersionString): Int = {
     if (major < that.major) -1

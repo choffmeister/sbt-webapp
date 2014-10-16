@@ -1,3 +1,5 @@
+package de.choffmeister.sbt
+
 import sbt._
 import sbt.Keys._
 
