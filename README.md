@@ -15,7 +15,7 @@ Your `project/Build.scala` could look something like this:
 ~~~ scala
 import sbt._
 import sbt.Keys._
-import WebAppPlugin._
+import de.choffmeister.sbt.WebAppPlugin._
 
 object Build extends sbt.Build {
   lazy val dist = TaskKey[File]("dist", "Builds the distribution packages")
