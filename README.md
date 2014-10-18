@@ -4,9 +4,11 @@ Integrates [NPM](https://www.npmjs.org/), [Bower](http://bower.io/) and [Gulp](h
 
 ## Usage
 
-Suppose you have a SBT multi-project with a subproject for your web application frontend that gets build with Gulp and a subproject for your Scala backend. Then add the following line to your projects `project/plugins.sbt` file:
+Suppose you have a SBT multi-project with a subproject for your web application frontend that gets build with Gulp and a subproject for your Scala backend. Then add the following lines to your projects `project/plugins.sbt` file:
 
 ~~~
+resolvers += "Sonatype snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
+
 addSbtPlugin("de.choffmeister" % "sbt-webapp" % "0.0.1-SNAPSHOT")
 ~~~
 
