@@ -49,5 +49,5 @@ object Build extends sbt.Build {
       organization := "de.choffmeister",
       organizationName := "Christian Hoffmeister",
       organizationHomepage := Some(new URL("http://choffmeister.de/")),
-      version := "0.0.1-SNAPSHOT")
+      version := "0.0.1")
 }
