@@ -140,9 +140,9 @@ object WebAppPlugin extends Plugin {
 
   private def getToolVersion(name: String): Option[VersionString] = {
     try {
-      VersionString(s"$name --version" !!)
+      Some(VersionString(s"$name --version" !!))
     } catch {
-      case e: Throwable => None
+      case e: Exception => None
     }
   }
 

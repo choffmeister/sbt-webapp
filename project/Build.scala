@@ -43,6 +43,8 @@ object Build extends sbt.Build {
     .settings(Defaults.defaultSettings: _*)
     .settings(buildSettings: _*)
     .settings(publishSettings: _*)
+    .settings(libraryDependencies ++= Seq(
+      "org.specs2" %% "specs2" % "2.4.1" % "test"))
     .settings(pomExtra := mavenInfos)
     .settings(
       name := "sbt-webapp",
