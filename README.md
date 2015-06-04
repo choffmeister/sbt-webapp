@@ -1,13 +1,13 @@
 # sbt-webapp
 
-Integrates [NPM](https://www.npmjs.org/), [Bower](http://bower.io/) and [Gulp](http://gulpjs.com/) into your SBT build process.
+Integrates [NPM](https://www.npmjs.org/) into your SBT build process.
 
 ## Usage
 
-Suppose you have a SBT multi-project with a subproject for your web application frontend that gets build with Gulp and a subproject for your Scala backend. Then add the following line to your projects `project/plugins.sbt` file:
+Suppose you have a SBT multi-project with a subproject for your web application frontend that gets build with NPM and a subproject for your Scala backend. Then add the following line to your projects `project/plugins.sbt` file:
 
 ~~~
-addSbtPlugin("de.choffmeister" % "sbt-webapp" % "0.0.1")
+addSbtPlugin("de.choffmeister" % "sbt-webapp" % "0.1.0")
 ~~~
 
 Your `project/Build.scala` could look something like this:
@@ -40,7 +40,7 @@ object Build extends sbt.Build {
     .settings(commonSettings: _*)
     .settings(name := "myproject")
     // this task combines the backend and frontend building into one task
-    .settings(dist <<= (streams, target, compile in server, webAppBuild in web) map { (s, target, server, web) =>
+    .settings(dist <<= (streams, target, compile in server, npmBuild in web) map { (s, target, server, web) =>
       val distDir = target / "dist"
       s.log(s"Composing all parts to $distDir" )
       IO.copyDirectory(server, distDir)
@@ -51,31 +51,40 @@ object Build extends sbt.Build {
 }
 ~~~
 
-Make sure, that NodeJS, NPM, Bower and Gulp are installed globally. To allow this plugin to properly control Gulp your `gulpfile.js` should be configured in a way that respects passing the
+To specify what is actually executed, configure your `package.json` like for example so (if you are using [Gulp](http://gulpjs.com/)):
 
-* `--target=/path/to/build/target` argument (to specify where gulp should put the files) and the
-* `--dist` argument (to indicate that this build is meant for distribution and hence should use stuff like minification and such).
-
-Now you have some new sbt commands available:
+~~~ json
+{
+  "name": "myproject",
+  "private": true,
+  "scripts": {
+    "start": "./node_modules/.bin/gulp",
+    "build": "./node_modules/.bin/gulp build --dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "gulp": "^3.8.10"
+  },
+  "dependencies": {
+  }
+}
+~~~
 
 ~~~ bash
-# initialize webapp by executing npm install and bower install
-$ sbt web/webAppInit
+# runs npm install and npm run build
+$ sbt web/npmBuild
 
-# builds the webapp in dist mode
-$ sbt web/webAppBuild
+# asynchronously runs npm start
+$ sbt web/npmStart
 
-# asynchronously runs gulp
-$ sbt web/webAppStart
-
-# stop asynchronously started gulp command
-$ sbt web/webAppStop
+# stop asynchronously started npm start
+$ sbt web/npmStop
 ~~~
 
 While development you can run your backend and your frontend in parallel by executing:
 
 ~~~ bash
-$ sbt web/webAppStart server/run
+$ sbt web/npmStart server/run
 ~~~
 
 To both, build your backend and your frontend you can run:
