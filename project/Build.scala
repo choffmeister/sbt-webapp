@@ -1,5 +1,6 @@
 import sbt._
 import sbt.Keys._
+import com.typesafe.sbt.{ GitVersioning => sbtGit }
 
 object Build extends sbt.Build {
   lazy val buildSettings = Seq(
@@ -41,13 +42,15 @@ object Build extends sbt.Build {
 
   lazy val root = (project in file("."))
     .settings(Defaults.defaultSettings: _*)
+    .enablePlugins(sbtGit)
     .settings(buildSettings: _*)
     .settings(publishSettings: _*)
+    .settings(libraryDependencies ++= Seq(
+      "org.specs2" %% "specs2" % "2.4.1" % "test"))
     .settings(pomExtra := mavenInfos)
     .settings(
       name := "sbt-webapp",
       organization := "de.choffmeister",
       organizationName := "Christian Hoffmeister",
-      organizationHomepage := Some(new URL("http://choffmeister.de/")),
-      version := "0.0.1")
+      organizationHomepage := Some(new URL("http://choffmeister.de/")))
 }
