@@ -1,6 +1,7 @@
 import sbt._
 import sbt.Keys._
-import com.typesafe.sbt.{ GitVersioning => sbtGit }
+import com.typesafe.sbt.GitVersioning
+import com.typesafe.sbt.SbtGit.git
 
 object Build extends sbt.Build {
   lazy val buildSettings = Seq(
@@ -42,7 +43,8 @@ object Build extends sbt.Build {
 
   lazy val root = (project in file("."))
     .settings(Defaults.defaultSettings: _*)
-    .enablePlugins(sbtGit)
+    .enablePlugins(GitVersioning)
+    .settings(git.formattedShaVersion := git.gitHeadCommit.value map(sha => s"${sha.take(7)}-SNAPSHOT"))
     .settings(buildSettings: _*)
     .settings(publishSettings: _*)
     .settings(libraryDependencies ++= Seq(
