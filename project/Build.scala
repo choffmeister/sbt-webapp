@@ -47,8 +47,8 @@ object Build extends sbt.Build {
     .settings(git.formattedShaVersion := git.gitHeadCommit.value map(sha => s"${sha.take(7)}-SNAPSHOT"))
     .settings(buildSettings: _*)
     .settings(publishSettings: _*)
-    .settings(libraryDependencies ++= Seq(
-      "org.specs2" %% "specs2" % "2.4.1" % "test"))
+    .settings(resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases")
+    .settings(libraryDependencies ++= Seq("org.specs2" %% "specs2-core" % "3.3.1" % "test"))
     .settings(pomExtra := mavenInfos)
     .settings(
       name := "sbt-webapp",

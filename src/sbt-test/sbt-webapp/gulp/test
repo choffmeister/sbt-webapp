@@ -1,0 +1,4 @@
+> dist
+$ exists target/dist/bin/myproject
+$ exists target/dist/web/build
+$ exists target/dist/web/node_modules/.bin/gulp
