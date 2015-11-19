@@ -6,7 +6,7 @@ import com.typesafe.sbt.SbtGit.git
 object Build extends sbt.Build {
   lazy val buildSettings = Seq(
     scalaVersion := "2.10.4",
-    scalacOptions ++= Seq("-encoding", "utf8"),
+    scalacOptions ++= Seq("-encoding", "utf8", "-deprecation"),
     sbtPlugin := true)
 
   lazy val publishSettings = Seq(
@@ -42,7 +42,7 @@ object Build extends sbt.Build {
     </developers> }
 
   lazy val root = (project in file("."))
-    .settings(Defaults.defaultSettings: _*)
+    .settings(Defaults.coreDefaultSettings: _*)
     .enablePlugins(GitVersioning)
     .settings(git.formattedShaVersion := git.gitHeadCommit.value map(sha => s"${sha.take(7)}-SNAPSHOT"))
     .settings(buildSettings: _*)

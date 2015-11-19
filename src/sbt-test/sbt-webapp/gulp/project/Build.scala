@@ -6,7 +6,7 @@ import xerial.sbt.Pack._
 object Build extends sbt.Build {
   lazy val dist = TaskKey[File]("dist", "Builds the distribution packages")
 
-  lazy val commonSettings = Defaults.defaultSettings ++ Seq(
+  lazy val commonSettings = Defaults.coreDefaultSettings ++ Seq(
     organization := "com.mycompany",
     version := "0.1.1",
     scalaVersion := "2.10.4"

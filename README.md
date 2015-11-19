@@ -9,10 +9,13 @@ Integrates [NodeJS][nodejs]/[NPM][npm] into your SBT build process.
 ## Usage
 
 ~~~ bash
-# runs npm install and npm test
+# runs npm install
+$ sbt npmInstall
+
+# runs npm install (silent) and npm test
 $ sbt npmTest
 
-# runs npm install and npm run build
+# runs npm install (silent) and npm run build
 $ sbt npmBuild
 
 # asynchronously runs npm start
