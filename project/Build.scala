@@ -1,11 +1,12 @@
 import sbt._
 import sbt.Keys._
-import com.typesafe.sbt.{ GitVersioning => sbtGit }
+import com.typesafe.sbt.GitVersioning
+import com.typesafe.sbt.SbtGit.git
 
 object Build extends sbt.Build {
   lazy val buildSettings = Seq(
     scalaVersion := "2.10.4",
-    scalacOptions ++= Seq("-encoding", "utf8"),
+    scalacOptions ++= Seq("-encoding", "utf8", "-deprecation"),
     sbtPlugin := true)
 
   lazy val publishSettings = Seq(
@@ -41,12 +42,13 @@ object Build extends sbt.Build {
     </developers> }
 
   lazy val root = (project in file("."))
-    .settings(Defaults.defaultSettings: _*)
-    .enablePlugins(sbtGit)
+    .settings(Defaults.coreDefaultSettings: _*)
+    .enablePlugins(GitVersioning)
+    .settings(git.formattedShaVersion := git.gitHeadCommit.value map(sha => s"${sha.take(7)}-SNAPSHOT"))
     .settings(buildSettings: _*)
     .settings(publishSettings: _*)
-    .settings(libraryDependencies ++= Seq(
-      "org.specs2" %% "specs2" % "2.4.1" % "test"))
+    .settings(resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases")
+    .settings(libraryDependencies ++= Seq("org.specs2" %% "specs2-core" % "3.3.1" % "test"))
     .settings(pomExtra := mavenInfos)
     .settings(
       name := "sbt-webapp",

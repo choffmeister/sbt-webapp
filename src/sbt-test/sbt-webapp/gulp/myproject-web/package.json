@@ -1,0 +1,12 @@
+{
+  "name": "myproject",
+  "private": true,
+  "scripts": {
+    "start": "./node_modules/.bin/gulp start",
+    "build": "./node_modules/.bin/gulp build",
+    "test": "./node_modules/.bin/gulp test"
+  },
+  "devDependencies": {
+    "gulp": "^3.8.10"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "myproject",
+  "private": true,
+  "scripts": {
+    "start": "node touch.js start",
+    "build": "node touch.js build",
+    "test": "node touch.js test",
+    "postinstall": "node touch.js install"
+  }
+}

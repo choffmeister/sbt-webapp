@@ -1,0 +1,9 @@
+machine:
+  java:
+    version: oraclejdk8
+  node:
+    version: 0.12.3
+
+test:
+  override:
+    - sbt test:test test:scripted

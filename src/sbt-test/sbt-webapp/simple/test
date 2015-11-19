@@ -1,0 +1,9 @@
+> npmBuild
+$ exists install
+$ exists build
+> npmTest
+$ exists test
+> npmStart
+$ sleep 1000
+> npmStop
+$ exists start

@@ -8,6 +8,7 @@ case class WebAppToolsVersions(nodeVersion: Option[VersionString], npmVersion: O
 object WebAppPlugin extends Plugin {
   private var npmStartProcess: Option[Process] = None
 
+  val npmInstall = taskKey[Unit]("runs 'npm install'")
   val npmTest = taskKey[Unit]("runs 'npm test'")
   val npmBuild = taskKey[File]("runs 'npm install' and then 'npm run build'")
   val npmStart = taskKey[Unit]("runs 'npm install' and then starts 'npm start' as background process")
@@ -20,16 +21,21 @@ object WebAppPlugin extends Plugin {
   lazy val webAppSettings = Seq[Def.Setting[_]](
     webAppDir := baseDirectory.value,
 
+    npmInstall <<= (streams, webAppDir) map { (s, dir) =>
+      s.log.info("Running web app tests")
+      Process("npm" :: "install" :: Nil, dir).!(s.log)
+      s.log.info("Done")
+    },
     npmTest <<= (streams, webAppDir) map { (s, dir) =>
       s.log.info("Running web app tests")
       Process("npm" :: "install" :: Nil, dir).!!(s.log)
-      Process("npm" :: "test" :: Nil, dir).!!(s.log)
+      Process("npm" :: "test" :: Nil, dir).!(s.log)
       s.log.info("Done")
     },
     npmBuild <<= (streams, webAppDir) map { (s, dir) =>
       s.log.info("Building web app")
       Process("npm" :: "install" :: Nil, dir).!!(s.log)
-      Process("npm" :: "run" :: "build" :: Nil, dir).!!(s.log)
+      Process("npm" :: "run" :: "build" :: Nil, dir).!(s.log)
       s.log.info("Done")
       dir
     },
