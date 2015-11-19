@@ -22,20 +22,20 @@ object WebAppPlugin extends Plugin {
     webAppDir := baseDirectory.value,
 
     npmInstall <<= (streams, webAppDir) map { (s, dir) =>
-      s.log.info("Running web app tests")
-      Process("npm" :: "install" :: Nil, dir).!(s.log)
+      s.log.info("Running 'npm install'")
+      run("npm" :: "install" :: Nil, dir, s.log)
       s.log.info("Done")
     },
     npmTest <<= (streams, webAppDir) map { (s, dir) =>
-      s.log.info("Running web app tests")
-      Process("npm" :: "install" :: Nil, dir).!!(s.log)
-      Process("npm" :: "test" :: Nil, dir).!(s.log)
+      s.log.info("Running 'npm test'")
+      run("npm" :: "install" :: Nil, dir, s.log)
+      run("npm" :: "test" :: Nil, dir, s.log)
       s.log.info("Done")
     },
     npmBuild <<= (streams, webAppDir) map { (s, dir) =>
-      s.log.info("Building web app")
-      Process("npm" :: "install" :: Nil, dir).!!(s.log)
-      Process("npm" :: "run" :: "build" :: Nil, dir).!(s.log)
+      s.log.info("Running 'npm run build'")
+      run("npm" :: "install" :: Nil, dir, s.log)
+      run("npm" :: "run" :: "build" :: Nil, dir, s.log)
       s.log.info("Done")
       dir
     },
@@ -57,6 +57,11 @@ object WebAppPlugin extends Plugin {
       getToolVersion("npm")
     }
   )
+
+  private def run(cmd: Seq[String], cwd: File, log: Logger): Unit = {
+    val exitCode = Process(cmd, cwd).!(log)
+    if (exitCode != 0) throw new Exception(s"Running '${cmd.mkString(" ")}' failed with exit code $exitCode")
+  }
 
   private def getToolVersion(name: String): Option[VersionString] = {
     try {
