@@ -1,40 +1,47 @@
-package de.choffmeister.sbt
-
-import sbt._
+import de.choffmeister.sbt.VersionString
 import sbt.Keys._
+import sbt._
 
-case class WebAppToolsVersions(nodeVersion: Option[VersionString], npmVersion: Option[VersionString])
-
-object WebAppPlugin extends Plugin {
+object WebApp extends sbt.AutoPlugin {
   private var npmStartProcess: Option[Process] = None
 
-  val npmInstall = taskKey[Unit]("runs 'npm install'")
-  val npmTest = taskKey[Unit]("runs 'npm test'")
-  val npmBuild = taskKey[File]("runs 'npm install' and then 'npm run build'")
-  val npmStart = taskKey[Unit]("runs 'npm install' and then starts 'npm start' as background process")
-  val npmStop = taskKey[Unit]("stops 'npm start' background process")
+  object autoImport {
+    lazy val npmInstall = taskKey[Unit]("runs 'npm install'")
+    lazy val npmTest = taskKey[Unit]("runs 'npm test'")
+    lazy val npmBuild = taskKey[File]("runs 'npm install' and then 'npm run build'")
+    lazy val npmStart = taskKey[Unit]("runs 'npm install' and then starts 'npm start' as background process")
+    lazy val npmStop = taskKey[Unit]("stops 'npm start' background process")
 
-  val webAppNodeVersion = taskKey[Option[VersionString]]("the version of node")
-  val webAppNpmVersion = taskKey[Option[VersionString]]("the version of npm")
-  val webAppDir = settingKey[File]("the path to the wep app root directory")
+    lazy val webAppNodeVersion = taskKey[Option[VersionString]]("the version of node")
+    lazy val webAppNpmVersion = taskKey[Option[VersionString]]("the version of npm")
+    lazy val webAppDir = settingKey[File]("the path to the wep app root directory")
+  }
 
-  lazy val webAppSettings = Seq[Def.Setting[_]](
+  import autoImport._
+
+  override lazy val projectSettings = Seq(
     webAppDir := baseDirectory.value,
-
+    webAppNodeVersion := {
+      getToolVersion("node")
+    },
+    webAppNpmVersion := {
+      getToolVersion("npm")
+    },
     npmInstall <<= (streams, webAppDir) map { (s, dir) =>
+      s.log.info("Running 'npm prune'")
+      run("npm" :: "prune" :: Nil, dir, s.log)
+      s.log.info("Done")
       s.log.info("Running 'npm install'")
       run("npm" :: "install" :: Nil, dir, s.log)
       s.log.info("Done")
     },
-    npmTest <<= (streams, webAppDir) map { (s, dir) =>
+    npmTest <<= (streams, webAppDir, npmInstall) map { (s, dir, _) =>
       s.log.info("Running 'npm test'")
-      run("npm" :: "install" :: Nil, dir, s.log)
       run("npm" :: "test" :: Nil, dir, s.log)
       s.log.info("Done")
     },
-    npmBuild <<= (streams, webAppDir) map { (s, dir) =>
+    npmBuild <<= (streams, webAppDir, npmInstall) map { (s, dir, _) =>
       s.log.info("Running 'npm run build'")
-      run("npm" :: "install" :: Nil, dir, s.log)
       run("npm" :: "run" :: "build" :: Nil, dir, s.log)
       s.log.info("Done")
       dir
@@ -49,12 +56,6 @@ object WebAppPlugin extends Plugin {
         npmStartProcess.get.destroy()
         npmStartProcess = None
       }
-    },
-    webAppNodeVersion := {
-      getToolVersion("node")
-    },
-    webAppNpmVersion := {
-      getToolVersion("npm")
     }
   )
 

@@ -5,6 +5,3 @@
                                   |Specify this property using the scriptedLaunchOpts -D.""".stripMargin)
   else addSbtPlugin("de.choffmeister" % "sbt-webapp" % pluginVersion)
 }
-
-
-addSbtPlugin("org.xerial.sbt" % "sbt-pack" % "0.6.12")
